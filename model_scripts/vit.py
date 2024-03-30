@@ -13,7 +13,6 @@ class TransformerEncoder(BaseEncoder):
         d_model = 64
         num_heads = 4
         num_layers = 3
-        num_latents = 100
         ff_dim = 1024
         # taken from tutorial at https://comsci.blog/posts/vit
         BaseEncoder.__init__(self)
@@ -32,7 +31,8 @@ class TransformerEncoder(BaseEncoder):
             d_model, nhead=num_heads, dim_feedforward=ff_dim, batch_first=True
         )
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
-        self.fc = nn.Linear(d_model, num_latents)
+        self.embedding = nn.Linear(d_model, args.latent_dim)
+        self.log_var = nn.Linear(d_model, args.latent_dim)
 
     def forward(self, x):
         N, C, H, W = x.shape
@@ -54,5 +54,8 @@ class TransformerEncoder(BaseEncoder):
 
         # compress to latent space
         x = self.fc(x)
-        output = ModelOutput(reconstruction=x)
+        output = ModelOutput(
+            embedding=self.embedding(x),
+            log_covariance=self.log_var(x)
+        )
         return output
