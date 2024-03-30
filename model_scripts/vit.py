@@ -10,13 +10,13 @@ class TransformerEncoder(BaseEncoder):
         img_width = 160
         img_channels = 1
         patch_size = 32
-        d_model = 64
+        d_model = 128
         num_heads = 4
-        num_layers = 3
+        num_layers = 4
         ff_dim = 1024
         # taken from tutorial at https://comsci.blog/posts/vit
         BaseEncoder.__init__(self)
-        self.name = 'ViT_v1'
+        self.name = 'ViT_v1.1'
 
         self.patch_size = patch_size
         self.patch_embedding = nn.Linear(img_channels * patch_size * patch_size, d_model)
