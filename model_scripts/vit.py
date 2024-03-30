@@ -54,4 +54,5 @@ class TransformerEncoder(BaseEncoder):
 
         # compress to latent space
         x = self.fc(x)
-        return x
+        output = ModelOutput(reconstruction=x)
+        return output
