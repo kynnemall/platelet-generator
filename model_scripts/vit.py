@@ -53,7 +53,6 @@ class TransformerEncoder(BaseEncoder):
         x = x[:, 0]
 
         # compress to latent space
-        x = self.fc(x)
         output = ModelOutput(
             embedding=self.embedding(x),
             log_covariance=self.log_var(x)
