@@ -32,11 +32,10 @@ class ResConvEncoder(BaseEncoder):
         self.rl4 = DepthwiseSeparableConv(in_channels=128, out_channels=256, kernel_size=1, stride=1)
         self.max_pool = nn.MaxPool2d(2)
         self.flat = nn.Flatten()
-        self.embedding = nn.Linear(256 * args.latent_dim, args.latent_dim)
-        self.log_var = nn.Linear(256 * args.latent_dim, args.latent_dim)
+        self.embedding = nn.Linear(256 * (args.input_dim[1] // 16) ** 2, args.latent_dim)
+        self.log_var = nn.Linear(256 * (args.input_dim[1] // 16) ** 2, args.latent_dim)
 
     def forward(self, x):
-
         x = self.l1(x) + self.rl1(x)
         x = self.max_pool(x)
         x = self.l2(x) + self.rl2(x)
@@ -73,7 +72,7 @@ class ResConvDecoder(BaseDecoder):
         self.final_act = nn.Sigmoid()
 
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
-        self.side = int(args.latent_dim ** 0.5)
+        self.side = args.input_dim[1] // 16
         self.linear = nn.Linear(args.latent_dim, args.latent_dim * self.side * self.side)
 
     def forward(self, x):
