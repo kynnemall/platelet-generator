@@ -73,11 +73,12 @@ class ResConvDecoder(BaseDecoder):
         self.final_act = nn.Sigmoid()
 
         self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
-        self.linear = nn.Linear(args.latent_dim, args.latent_dim * 10 * 10)
+        self.side = int(args.latent_dim ** 0.5)
+        self.linear = nn.Linear(args.latent_dim, args.latent_dim * self.side * self.side)
 
     def forward(self, x):
         x = self.linear(x)
-        x = x.view(x.size(0), self.latent_features, 10, 10)
+        x = x.view(x.size(0), self.latent_features, self.side, self.side)
         x = self.l1(x) + self.rl1(x)
         x = self.upsample(x)
         x = self.l2(x) + self.rl2(x)
